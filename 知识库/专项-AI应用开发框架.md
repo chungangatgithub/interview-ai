@@ -1,6 +1,6 @@
 # AI 应用开发框架专项知识问答
 
-**适用岗位**：AI 工程效率工程师
+**适用岗位**：AI 应用开发工程师
 **问答设计原则**：按难度梯度递进（⭐ 入门 → ⭐⭐ 初级 → ⭐⭐⭐ 中级 → ⭐⭐⭐⭐ 高级 → ⭐⭐⭐⭐⭐ 专家）
 
 ---
@@ -304,6 +304,71 @@ agent = create_tool_calling_agent(llm, [rag_tool, ...], prompt)
 
 ---
 
+### Q3.3 生产级 RAG 数据摄入 Pipeline ⭐⭐⭐⭐
+
+**问题**：
+> 用 LangChain 或 LlamaIndex 构建 RAG 时，数据摄入 Pipeline 应该如何设计？如何利用 `CacheBackedEmbeddings`、Ingestion Pipeline 等能力减少重复计算并支撑增量更新？
+
+**期望答案**：
+
+**典型摄入链路**：
+
+```
+Loader / Parser
+      ↓
+结构化清洗 / 元数据抽取
+      ↓
+去重 / 内容哈希
+      ↓
+Chunking（按文档类型）
+      ↓
+Embedding（带缓存）
+      ↓
+写入 Vector Store
+      ↓
+校验 / 发布 / 监控
+```
+
+**框架能力分工**：
+
+| 环节 | LlamaIndex | LangChain | 最佳实践 |
+|------|------------|-----------|----------|
+| **加载/解析** | `SimpleDirectoryReader`、`LlamaParse` | `DocumentLoader` 体系 | 复杂 PDF/表格优先专业解析 |
+| **分块** | `NodeParser`、Ingestion Pipeline | `TextSplitter` | 按 FAQ、商品、长文档定制 Chunk 策略 |
+| **Embedding** | Pipeline Transformation | `CacheBackedEmbeddings` | 对重复文本启用缓存，降低成本 |
+| **更新编排** | 自定义 Ingestion Pipeline | Runnable / 异步任务编排 | 用 `content_hash` 判断是否需要重算 |
+| **观测调试** | LlamaTrace | LangSmith | 监控新鲜度、缓存命中率、召回质量 |
+
+**`CacheBackedEmbeddings` 的实战要点**：
+1. 适合文档摄入阶段，对重复 Chunk 或重复跑批的场景收益明显
+2. `namespace` 最好绑定 Embedding 模型名和版本，避免不同向量空间的缓存互相污染
+3. 默认更适合缓存 Document Embedding；是否缓存 Query Embedding，要看查询重复度和失效策略
+4. 缓存键建议基于规范化后的文本或 `content_hash`，而不是原始脏数据
+
+**增量更新的推荐做法**：
+1. 用 CDC / MQ / 定时任务识别新增、修改、删除
+2. 为每个 Chunk 维护 `source_id`、`chunk_id`、`content_hash`、`doc_version`
+3. `content_hash` 未变化时跳过 Embedding，直接复用缓存或旧向量
+4. `content_hash` 变化时，只重算受影响的 Chunk，而不是全量重建
+5. 写入向量库时采用版本化发布，避免先删后写带来的查询空窗期
+
+**为什么 Pipeline 要“先清洗后向量化”**：
+- 脏数据、模板噪声、重复字段会直接拉低 Embedding 质量
+- 对商品、工单、FAQ 这类半结构化数据，先结构化再拼装文本，通常比直接把原始 JSON 全量塞给 Embedding 效果更稳定
+- 分块策略、元数据抽取、Embedding 模型版本应该作为同一个摄入版本的一部分统一管理
+
+**社区常见组合方案**：
+- **LlamaIndex**：负责复杂文档解析、Node 切分、Retriever 构建
+- **LangChain**：负责缓存、工作流编排、工具集成、可观测性
+- **向量数据库**：负责检索、过滤、版本化发布和在线服务
+
+**评分要点**：
+- 3 分：知道数据摄入不只是“读文档然后入库”
+- 4 分：能讲清清洗、分块、缓存、增量更新之间的关系
+- 5 分：能结合 `CacheBackedEmbeddings`、版本管理、可观测性给出生产级方案
+
+---
+
 ## 四、低代码平台与编排
 
 ### Q4.1 Dify 与低代码 AI 平台 ⭐⭐⭐
@@ -499,5 +564,5 @@ agent = create_tool_calling_agent(llm, [rag_tool, ...], prompt)
 |------|------|----------|
 | ⭐⭐ 初级 | 1 题 | 框架全景与选型 |
 | ⭐⭐⭐ 中级 | 3 题 | LangChain 核心、LlamaIndex 架构、Dify 低代码 |
-| ⭐⭐⭐⭐ 高级 | 3 题 | Agent 实现、RAG 选型、LLM 可观测性 |
+| ⭐⭐⭐⭐ 高级 | 4 题 | Agent 实现、RAG 选型与摄入、LLM 可观测性 |
 | ⭐⭐⭐⭐⭐ 专家 | 1 题 | LLM 应用测试与评估 |

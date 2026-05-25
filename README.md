@@ -4,7 +4,7 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 
 ## 项目定位
 
-基于 Claude Code 自定义命令体系，将面试方法论（STAR/BEI、岗位画像、评分标准）转化为可执行的 AI 工作流。同一套知识库，两个视角：
+将面试方法论（STAR/BEI、岗位画像、评分标准）封装为可执行的 AI 工作流。同一套知识库、同一套 Slash 命令，支持 **Claude Code** 与 **Cursor** 双端使用：
 
 - **面试官侧**：出题 → 追问 → 面评，辅助完成专业面试全流程
 - **候选人侧**：JD 解码 → 人岗对齐 → 定制简历 → 面试准备
@@ -23,14 +23,22 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 │   └── 面试报告/
 │
 ├── 候选人/                      作为应聘者使用
-│   └── 幻方-DeepSeek/          按岗位组织
-│       ├── JD.md               目标岗位 JD
-│       └── ...                 产物①~④（见下方命令）
+│   └── {公司-岗位}/            按岗位组织（示例：幻方-DeepSeek/）
+│       ├── JD*.md              目标岗位 JD
+│       ├── JD人才画像.md       产物①
+│       ├── 对标表.md           产物②
+│       ├── 定制简历.md         产物③
+│       └── 面试准备册.md       产物④
 │
-└── .claude/commands/           所有 slash 命令
+├── .claude/commands/           Claude Code Slash 命令
+└── .cursor/commands/           Cursor Slash 命令（内容与 Claude 版对齐）
 ```
 
+命令规划详见 [`候选人/应聘命令规划.md`](候选人/应聘命令规划.md)。
+
 ## Slash 命令
+
+两套命令目录内容对齐，在各自 IDE 中通过 `/命令名` 调用。
 
 ### 面试官侧
 
@@ -54,13 +62,47 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 
 ## 使用方式
 
+### Claude Code
+
 1. 克隆本仓库
-2. 在仓库目录下启动 Claude Code
-3. `/reload-plugins` 加载命令
-4. 按面试官或候选人场景使用对应命令
+2. 在仓库目录下启动 [Claude Code](https://claude.ai/code)
+3. 执行 `/reload-plugins` 加载 `.claude/commands/` 中的命令
+4. 按场景使用对应 Slash 命令
+
+### Cursor
+
+1. 克隆本仓库并用 Cursor 打开
+2. 在聊天中输入 `/` 选择 `.cursor/commands/` 中的命令
+3. 用 `@` 引用 JD、对标表、简历、面试转写等文件作为输入
+4. 按场景使用对应 Slash 命令
+
+### 调用示例
+
+```text
+# 面试官侧
+/面评生成 丛思羽 @面试记录/2026-5-15-丛思羽-原始转写.md
+/AI产品问答生成 丛思羽
+
+# 候选人侧
+/JD解码 @候选人/幻方-DeepSeek/JD.md
+/知己 @候选人/幻方-DeepSeek/JD人才画像.md @resume/我的简历.md
+/简历定制 @候选人/幻方-DeepSeek/对标表.md
+/面试准备 @候选人/幻方-DeepSeek/对标表.md
+```
+
+## 命令格式说明
+
+| | Claude Code (`.claude/commands/`) | Cursor (`.cursor/commands/`) |
+|---|-----------------------------------|-------------------------------|
+| 元数据 | YAML frontmatter（`description`、`argument-hint`） | 无 frontmatter，正文即指令 |
+| 参数 | `$ARGUMENTS` | 「参数解析」+ `@` 文件引用 |
+| 日期 | Bash 注入 `!`date ...`` | 说明用 `Shell` 执行 `date` |
+| 读文件 | `Read` | `ReadFile` |
+
+修改命令时，建议同步更新两套目录，保持行为一致。
 
 ## 依赖
 
-- [Claude Code](https://claude.ai/code)
-- 面试官侧命令需要候选人简历文件和面试录音转写
-- 候选人侧命令需要个人材料（简历、周报、项目总结等）
+- **Claude Code** 或 **Cursor**（二选一即可）
+- 面试官侧：候选人简历、面试问答计划、面试录音转写
+- 候选人侧：JD 原文、个人材料（简历、周报、项目总结等）

@@ -2,7 +2,7 @@
 
 将 Markdown 简历导出为 **PDF**。
 
-> **环境**：本机需 **Node.js 18+**。首次导出会自动在 `scripts/` 安装 npm 依赖；也可预先执行 `cd scripts && npm install`。
+> **环境**：克隆后建议先执行 `./scripts/setup.sh`（尽量自动安装 Node.js + npm 依赖）。macOS 需已安装 [Homebrew](https://brew.sh/)。
 
 ---
 
@@ -20,15 +20,16 @@
 
 ## 操作步骤
 
-1. 解析并定位源 `.md`。
-2. 使用 `ReadFile` 确认文件存在。
-3. 在项目根目录执行：
+1. 若 `node` 不可用或 `scripts/node_modules` 缺失，先执行 `./scripts/setup.sh`。
+2. 解析并定位源 `.md`。
+3. 使用 `ReadFile` 确认文件存在。
+4. 在项目根目录执行：
 
 ```bash
 ./scripts/export-resume.sh -i "<简历.md路径>" [-o "<输出目录>"]
 ```
 
-4. 告知用户 `{同名}.pdf` 路径。
+5. 告知用户 `{同名}.pdf` 路径。
 
 ---
 

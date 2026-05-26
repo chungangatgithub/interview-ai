@@ -12,6 +12,8 @@ usage() {
 
 示例:
   scripts/export-resume.sh -i 面试官/候选人简历/2026-5-15-丛思羽.md
+
+首次使用请先运行: ./scripts/setup.sh
 EOF
 }
 
@@ -36,21 +38,11 @@ if [[ ! -f "$INPUT" ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-NODE_MODULES="$SCRIPT_DIR/node_modules"
+# shellcheck source=env.sh
+source "$SCRIPT_DIR/env.sh"
 
-ensure_node_deps() {
-  if [[ -d "$NODE_MODULES/md-to-pdf" ]]; then
-    return 0
-  fi
-  if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-    echo "错误: 未找到 Node.js 18+。请安装：https://nodejs.org/" >&2
-    exit 1
-  fi
-  echo "首次导出：正在安装 Node 依赖（约 1–3 分钟，仅需一次）…" >&2
-  (cd "$SCRIPT_DIR" && npm install --omit=dev --no-fund --no-audit)
-}
-
-ensure_node_deps
+ensure_node
+ensure_npm_deps
 
 args=(-i "$INPUT")
 [[ -n "$OUTPUT_DIR" ]] && args+=(-o "$OUTPUT_DIR")

@@ -86,6 +86,9 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 /面评生成 丛思羽 @面试记录/2026-5-15-丛思羽-原始转写.md
 /AI产品问答生成 丛思羽
 
+# 首次使用 PDF 导出（克隆后执行一次）
+./scripts/setup.sh
+
 # 候选人侧
 /JD解码 @候选人/幻方-DeepSeek/JD.md
 /知己 @候选人/幻方-DeepSeek/JD人才画像.md @resume/我的简历.md
@@ -110,9 +113,9 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 | 能力 | 克隆即用？ | 说明 |
 |------|------------|------|
 | 全部 Slash 命令（出题、面评、JD 解码、简历定制等） | **可以** | 只需 [Cursor](https://cursor.com/) 或 [Claude Code](https://claude.ai/code) |
-| **`/简历导出PDF`** | **几乎可以** | 本机需 **[Node.js 18+](https://nodejs.org/)** |
+| **`/简历导出PDF`** | **几乎可以** | 克隆后执行一次 `./scripts/setup.sh`（尽量自动装 Node + npm 依赖） |
 
-首次导出时，脚本会在 `scripts/` 下**自动**执行 `npm install`（约 1–3 分钟，下载 Chromium 等，仅一次）。也可克隆后手动执行 `cd scripts && npm install`。详见 [`scripts/README.md`](scripts/README.md)。
+`setup.sh` 在 macOS 上可通过 Homebrew 自动安装 Node；npm 依赖会在首次导出时自动安装。详见 [`scripts/README.md`](scripts/README.md)。
 
 ## 其他依赖
 

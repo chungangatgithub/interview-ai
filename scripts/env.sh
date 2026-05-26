@@ -23,6 +23,22 @@ install_node_macos() {
   brew install node
 }
 
+install_node_windows() {
+  if command -v winget.exe >/dev/null 2>&1 || command -v winget >/dev/null 2>&1; then
+    echo "正在通过 winget 安装 Node.js LTS（可能需要几分钟）…" >&2
+    winget install OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements
+    return $?
+  fi
+  if command -v choco >/dev/null 2>&1; then
+    echo "正在通过 Chocolatey 安装 Node.js LTS…" >&2
+    choco install nodejs-lts -y
+    return $?
+  fi
+  echo "未检测到 winget / Chocolatey。请在 PowerShell 中运行: .\\scripts\\setup.ps1" >&2
+  echo "或从 https://nodejs.org/ 手动安装 Node.js ${MIN_NODE_MAJOR}+" >&2
+  return 1
+}
+
 install_node_linux() {
   if command -v apt-get >/dev/null 2>&1; then
     echo "尝试通过 apt 安装 nodejs、npm（需要 sudo）…" >&2
@@ -40,9 +56,14 @@ install_node_linux() {
 
 # 尝试自动安装 Node.js（仅 macOS/Homebrew 默认可无人值守；Linux 需 sudo）
 try_install_node() {
-  case "$(uname -s)" in
+  local os
+  os="$(uname -s)"
+  case "$os" in
     Darwin) install_node_macos ;;
     Linux) install_node_linux ;;
+    MINGW*|MSYS*|CYGWIN*|Windows_NT)
+      install_node_windows
+      ;;
     *)
       echo "当前系统请手动安装 Node.js ${MIN_NODE_MAJOR}+：https://nodejs.org/" >&2
       return 1
@@ -68,10 +89,11 @@ ensure_node() {
 错误: 需要 Node.js ${MIN_NODE_MAJOR}+ 与 npm。
 
 可选方案：
-  1. 运行一键环境准备: ./scripts/setup.sh
-  2. macOS: brew install node
-  3. 官网安装包: https://nodejs.org/
-  4. 使用 nvm: 仓库根目录有 .nvmrc，可执行 nvm install && nvm use
+  1. macOS / Git Bash: ./scripts/setup.sh
+  2. Windows PowerShell: .\\scripts\\setup.ps1
+  3. macOS: brew install node  |  Windows: winget install OpenJS.NodeJS.LTS
+  4. 官网安装包: https://nodejs.org/
+  5. nvm 用户: nvm install && nvm use（见 .nvmrc）
 EOF
   return 1
 }

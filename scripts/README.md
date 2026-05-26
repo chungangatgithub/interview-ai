@@ -2,20 +2,24 @@
 
 ## 克隆后第一次使用（推荐）
 
-```bash
-./scripts/setup.sh
-```
+| 系统 | 命令 |
+|------|------|
+| **macOS / Linux / Git Bash** | `./scripts/setup.sh` |
+| **Windows PowerShell** | `.\scripts\setup.ps1` |
 
 会自动完成：
 
 1. **检测 Node.js 18+**；若未安装则尝试自动安装  
-   - macOS：有 Homebrew 时执行 `brew install node`  
-   - Linux：有 apt/dnf 时尝试 `sudo` 安装（需本机权限）  
+   - macOS：`brew install node`  
+   - Linux：`apt` / `dnf`（需 sudo）  
+   - Windows：`winget install OpenJS.NodeJS.LTS`，或已装 Chocolatey 时用 `choco`  
 2. **安装 npm 依赖**（`npm ci`，约 1–3 分钟）
 
-也可跳过 setup，直接导出：首次会尝试自动装依赖；若无 Node 会提示运行 `setup.sh`。
+**Windows 说明：** 原生 PowerShell 请用 `setup.ps1`；不要用 bash 版 `setup.sh`（除非已装 Git Bash）。winget 随 Windows 10/11 自带；安装 Node 后若终端仍找不到 `node`，请**关闭并重新打开**终端。
 
-使用 [nvm](https://github.com/nvm-sh/nvm) 时：在仓库根目录执行 `nvm install && nvm use`（见 `.nvmrc`）。
+也可跳过 setup，直接导出：首次会尝试自动装依赖。
+
+使用 [nvm](https://github.com/nvm-sh/nvm) 时：`nvm install && nvm use`（见 `.nvmrc`）。
 
 ## `export-resume.sh` / `export-resume.mjs`
 

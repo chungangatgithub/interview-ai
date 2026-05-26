@@ -87,7 +87,8 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 /AI产品问答生成 丛思羽
 
 # 首次使用 PDF 导出（克隆后执行一次）
-./scripts/setup.sh
+# macOS/Linux: ./scripts/setup.sh
+# Windows PowerShell: .\scripts\setup.ps1
 
 # 候选人侧
 /JD解码 @候选人/幻方-DeepSeek/JD.md
@@ -113,9 +114,12 @@ AI 辅助面试工具集 —— 一体两面：既是面试官的工具箱，也
 | 能力 | 克隆即用？ | 说明 |
 |------|------------|------|
 | 全部 Slash 命令（出题、面评、JD 解码、简历定制等） | **可以** | 只需 [Cursor](https://cursor.com/) 或 [Claude Code](https://claude.ai/code) |
-| **`/简历导出PDF`** | **几乎可以** | 克隆后执行一次 `./scripts/setup.sh`（尽量自动装 Node + npm 依赖） |
+| **`/简历导出PDF`** | **几乎可以** | 克隆后执行环境准备脚本（见下） |
 
-`setup.sh` 在 macOS 上可通过 Homebrew 自动安装 Node；npm 依赖会在首次导出时自动安装。详见 [`scripts/README.md`](scripts/README.md)。
+- macOS / Linux / Git Bash：`./scripts/setup.sh`  
+- Windows PowerShell：`.\scripts\setup.ps1`（通过 **winget** 自动装 Node）
+
+npm 依赖会在 setup 或首次导出时自动安装。详见 [`scripts/README.md`](scripts/README.md)。
 
 ## 其他依赖
 

@@ -1,0 +1,16 @@
+{
+  "name": "interview-ai-resume-export",
+  "private": true,
+  "type": "module",
+  "description": "Markdown 简历导出 PDF",
+  "scripts": {
+    "postinstall": "node -e \"console.log('简历导出依赖已就绪')\"",
+    "export": "node export-resume.mjs"
+  },
+  "dependencies": {
+    "md-to-pdf": "^5.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

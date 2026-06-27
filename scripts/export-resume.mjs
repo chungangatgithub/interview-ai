@@ -40,10 +40,28 @@ async function exportPdf(input, outPath) {
     {
       dest: outPath,
       stylesheet: css,
+      // 渲染后处理（通用）：移除「无表头」表格语法（| | / |--|--|）产生的空表头行
+      script: [
+        {
+          content: `(function () {
+            document.querySelectorAll('table thead').forEach(function (thead) {
+              var ths = Array.prototype.slice.call(thead.querySelectorAll('th'));
+              if (ths.length && ths.every(function (th) { return th.textContent.trim() === ''; })) {
+                thead.parentNode.removeChild(thead);
+              }
+            });
+          })();`,
+        },
+      ],
       pdf_options: {
         format: "A4",
-        margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
+        margin: { top: "18mm", right: "18mm", bottom: "16mm", left: "18mm" },
         printBackground: true,
+        displayHeaderFooter: true,
+        headerTemplate: "<div></div>",
+        footerTemplate:
+          '<div style="width:100%;font-size:8px;color:#9aa0a6;text-align:center;">' +
+          '<span class="pageNumber"></span> / <span class="totalPages"></span></div>',
       },
       launch_options: {
         args: ["--no-sandbox", "--disable-setuid-sandbox"],

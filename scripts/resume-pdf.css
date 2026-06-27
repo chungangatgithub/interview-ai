@@ -1,51 +1,151 @@
-/* md-to-pdf 简历样式（中文） */
-@page {
-  margin: 2cm;
-}
+/* 通用 Markdown → PDF 排版样式（中文优先）
+ * 适用于任意 Markdown 文档（简历 / 准备册 / 对标表等），不针对具体内容。 */
 
 html {
   font-size: 11pt;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", "SimHei",
-    sans-serif;
-  line-height: 1.5;
-  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Noto Sans CJK SC", "Microsoft YaHei", "SimHei", "Segoe UI", Arial, sans-serif;
+  line-height: 1.65;
+  color: #1f2328;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-wrap: break-word;
 }
 
+/* 标题：层级分明 + 不与下文割裂 */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  break-after: avoid;
+  page-break-after: avoid;
+}
 h1 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.7rem;
+  margin: 0 0 0.55em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid #d1d9e0;
+  letter-spacing: 0.3px;
 }
-
 h2 {
-  font-size: 1.15rem;
-  margin-top: 1.2rem;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 0.25rem;
+  font-size: 1.22rem;
+  margin: 1.5em 0 0.7em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid #d1d9e0;
+  color: #0b3a66;
 }
-
 h3 {
-  font-size: 1rem;
-  margin-top: 0.8rem;
+  font-size: 1.04rem;
+  margin: 1.15em 0 0.45em;
+  color: #1f2328;
+}
+h4 {
+  font-size: 0.96rem;
+  margin: 1em 0 0.35em;
+  color: #424a53;
 }
 
+p {
+  margin: 0.5em 0;
+}
+
+ul, ol {
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+li {
+  margin: 0.28em 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+li > ul, li > ol {
+  margin: 0.2em 0;
+}
+
+strong {
+  font-weight: 700;
+  color: #111418;
+}
+a {
+  color: #0969da;
+  text-decoration: none;
+  word-break: break-all;
+}
+hr {
+  border: none;
+  border-top: 1px solid #d1d9e0;
+  margin: 1.5em 0;
+}
+img {
+  max-width: 100%;
+}
+
+/* 表格：斑马纹 + 顶对齐 + 不被分页切断 */
 table {
   border-collapse: collapse;
   width: 100%;
-  margin: 0.5rem 0;
+  margin: 0.9em 0;
+  font-size: 0.92rem;
 }
-
-th,
-td {
-  border: 1px solid #ccc;
-  padding: 0.35rem 0.5rem;
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 9px;
   text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #eef1f4;
+  font-weight: 600;
+}
+tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
-hr {
-  border: none;
-  border-top: 1px solid #eee;
-  margin: 1rem 0;
+/* 代码 */
+code {
+  background: #f0f2f4;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 85%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+pre {
+  background: #f6f8fa;
+  border: 1px solid #d1d9e0;
+  padding: 0.9em 1em;
+  border-radius: 8px;
+  overflow: auto;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+/* 引用块：左侧蓝条 + 浅底 */
+blockquote {
+  color: #57606a;
+  border-left: 3px solid #0969da;
+  background: #f6f8fa;
+  padding: 0.5em 1em;
+  margin: 0.8em 0;
+  border-radius: 0 6px 6px 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+blockquote p {
+  margin: 0.3em 0;
 }
